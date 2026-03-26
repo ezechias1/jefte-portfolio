@@ -13,7 +13,15 @@ connectDB();
 // Security middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, serverless)
+    if (!origin) return callback(null, true);
+    const allowed = process.env.FRONTEND_URL;
+    if (!allowed || origin === allowed.trim()) return callback(null, true);
+    // Allow all vercel.app subdomains
+    if (origin.endsWith('.vercel.app')) return callback(null, true);
+    callback(null, true);
+  },
   credentials: true,
 }));
 
