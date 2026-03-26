@@ -68,7 +68,7 @@ const addons = [
 ];
 
 export default function Services() {
-  const whatsapp = `https://wa.me/${(import.meta.env.VITE_WHATSAPP_NUMBER || '+27000000000').replace(/\D/g, '')}?text=Hi Jefte, I'd like to discuss a project.`;
+  const whatsapp = `https://wa.me/27761708151?text=Hi Jefte, I'd like to discuss a project.`;
 
   return (
     <PageTransition>

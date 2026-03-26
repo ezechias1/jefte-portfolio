@@ -14,20 +14,20 @@ export default function AdminBookings() {
   const [selected, setSelected] = useState(null);
   const [filterStatus, setFilterStatus] = useState('');
 
-  const fetch = () => {
+  const fetchBookings = () => {
     const params = filterStatus ? `?status=${filterStatus}` : '';
     api.get(`/bookings${params}`)
       .then(({ data }) => setBookings(data.data || []))
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { fetch(); }, [filterStatus]);
+  useEffect(() => { fetchBookings(); }, [filterStatus]);
 
   const updateStatus = async (id, status) => {
     try {
       await api.put(`/bookings/${id}`, { status });
       toast.success('Status updated.');
-      fetch();
+      fetchBookings();
       if (selected?._id === id) setSelected(prev => ({ ...prev, status }));
     } catch { toast.error('Update failed.'); }
   };

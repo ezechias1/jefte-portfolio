@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 
@@ -14,6 +14,25 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // Hidden admin access: 5 taps on JEFTE within 3 seconds
+  const tapCountRef = useRef(0);
+  const tapTimerRef = useRef(null);
+
+  const handleLogoTap = useCallback(() => {
+    tapCountRef.current += 1;
+    if (tapCountRef.current === 1) {
+      tapTimerRef.current = setTimeout(() => {
+        tapCountRef.current = 0;
+      }, 3000);
+    }
+    if (tapCountRef.current >= 5) {
+      tapCountRef.current = 0;
+      clearTimeout(tapTimerRef.current);
+      navigate('/admin/login');
+    }
+  }, [navigate]);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40);
@@ -27,8 +46,17 @@ export default function Navbar() {
     <>
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'glass py-4' : 'py-6'}`}>
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          {/* Logo */}
-          <Link to="/" className="font-display text-2xl font-light tracking-widest text-ivory hover:text-gold transition-colors">
+          {/* Logo — tap 5 times to access admin */}
+          <Link
+            to="/"
+            onClick={(e) => {
+              e.preventDefault();
+              handleLogoTap();
+              // Only navigate home on single click (handled by timeout reset)
+              if (tapCountRef.current <= 1) navigate('/');
+            }}
+            className="font-display text-2xl font-light tracking-widest text-ivory hover:text-gold transition-colors select-none"
+          >
             JEFTE
           </Link>
 

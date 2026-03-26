@@ -1,12 +1,22 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function CustomCursor() {
   const dotRef = useRef(null);
   const ringRef = useRef(null);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   useEffect(() => {
+    // Disable custom cursor on touch devices
+    const hasFinPointer = window.matchMedia('(pointer: fine)').matches;
+    if (!hasFinPointer) {
+      setIsTouchDevice(true);
+      return;
+    }
+
     const dot = dotRef.current;
     const ring = ringRef.current;
+    if (!dot || !ring) return;
+
     let mouseX = 0, mouseY = 0;
     let ringX = 0, ringY = 0;
     let raf;
@@ -37,7 +47,6 @@ export default function CustomCursor() {
 
     animate();
 
-    // Observe DOM for new interactive elements
     const observer = new MutationObserver(() => {
       document.querySelectorAll('a, button, [role="button"]').forEach(el => {
         el.removeEventListener('mouseenter', onMouseEnterLink);
@@ -54,6 +63,8 @@ export default function CustomCursor() {
       observer.disconnect();
     };
   }, []);
+
+  if (isTouchDevice) return null;
 
   return (
     <>

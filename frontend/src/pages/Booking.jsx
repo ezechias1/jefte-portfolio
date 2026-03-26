@@ -18,12 +18,18 @@ export default function Booking() {
       await api.post('/bookings', data);
       setSubmitted(true);
       reset();
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Something went wrong. Please try again.');
+    } catch {
+      // Fallback: open mailto if API is unavailable
+      const subject = encodeURIComponent(`Booking Request from ${data.name}`);
+      const body = encodeURIComponent(`Name: ${data.name}\nEmail: ${data.email}\nPhone: ${data.phone || 'N/A'}\nService: ${data.service}\nDate: ${data.date || 'Flexible'}\n\n${data.message || ''}`);
+      window.open(`mailto:jeftenotwstudios@gmail.com?subject=${subject}&body=${body}`, '_self');
+      toast.success('Opening your email client...');
+      setSubmitted(true);
+      reset();
     }
   };
 
-  const whatsapp = `https://wa.me/${(import.meta.env.VITE_WHATSAPP_NUMBER || '+27000000000').replace(/\D/g, '')}?text=Hi Jefte, I'd like to book a session.`;
+  const whatsapp = `https://wa.me/27761708151?text=Hi Jefte, I'd like to book a session.`;
 
   if (submitted) {
     return (

@@ -23,20 +23,20 @@ export default function AdminQuotes() {
   const [selected, setSelected] = useState(null);
   const [filterStatus, setFilterStatus] = useState('');
 
-  const fetch = () => {
+  const fetchQuotes = () => {
     const params = filterStatus ? `?status=${filterStatus}` : '';
     api.get(`/quotes${params}`)
       .then(({ data }) => setQuotes(data.data || []))
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { fetch(); }, [filterStatus]);
+  useEffect(() => { fetchQuotes(); }, [filterStatus]);
 
   const updateStatus = async (id, status) => {
     try {
       await api.put(`/quotes/${id}`, { status });
       toast.success('Status updated.');
-      fetch();
+      fetchQuotes();
       if (selected?._id === id) setSelected(prev => ({ ...prev, status }));
     } catch { toast.error('Update failed.'); }
   };

@@ -2,12 +2,20 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { Check, Instagram, Youtube, Mail, MessageCircle, MapPin } from 'lucide-react';
+import { Check, Instagram, Youtube, Mail, MessageCircle, MapPin, Phone } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../utils/api';
 import PageTransition from '../components/ui/PageTransition';
 import Reveal from '../components/ui/Reveal';
 import { FormField, Input, Textarea } from '../components/ui/FormFields';
+
+const CONTACT = {
+  email: 'jeftenotwstudios@gmail.com',
+  phone: '076 170 8151',
+  phoneTel: '+27761708151',
+  whatsapp: 'https://wa.me/27761708151',
+  location: 'Cape Town, South Africa',
+};
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
@@ -18,12 +26,16 @@ export default function Contact() {
       await api.post('/contact', data);
       setSubmitted(true);
       reset();
-    } catch (err) {
-      toast.error('Something went wrong. Please try again.');
+    } catch {
+      // Fallback: open mailto if API is unavailable
+      const subject = encodeURIComponent(`New message from ${data.name}`);
+      const body = encodeURIComponent(`Name: ${data.name}\nEmail: ${data.email}\n\n${data.message}`);
+      window.open(`mailto:${CONTACT.email}?subject=${subject}&body=${body}`, '_self');
+      toast.success('Opening your email client...');
+      setSubmitted(true);
+      reset();
     }
   };
-
-  const whatsapp = `https://wa.me/${(import.meta.env.VITE_WHATSAPP_NUMBER || '+27000000000').replace(/\D/g, '')}`;
 
   return (
     <PageTransition>
@@ -55,31 +67,50 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="text-xs text-mist tracking-widest uppercase">Location</p>
-                    <p className="text-ivory text-sm">Cape Town, South Africa</p>
+                    <p className="text-ivory text-sm">{CONTACT.location}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-9 h-9 border border-ash flex items-center justify-center flex-shrink-0">
+
+                <a href={`mailto:${CONTACT.email}`} className="flex items-center gap-4 group">
+                  <div className="w-9 h-9 border border-ash group-hover:border-gold flex items-center justify-center flex-shrink-0 transition-colors">
                     <Mail size={14} className="text-gold" />
                   </div>
                   <div>
                     <p className="text-xs text-mist tracking-widest uppercase">Email</p>
-                    <p className="text-ivory text-sm">jefte@yourdomain.com</p>
+                    <p className="text-ivory text-sm group-hover:text-gold transition-colors">{CONTACT.email}</p>
                   </div>
-                </div>
+                </a>
+
+                <a href={`tel:${CONTACT.phoneTel}`} className="flex items-center gap-4 group">
+                  <div className="w-9 h-9 border border-ash group-hover:border-gold flex items-center justify-center flex-shrink-0 transition-colors">
+                    <Phone size={14} className="text-gold" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-mist tracking-widest uppercase">Phone</p>
+                    <p className="text-ivory text-sm group-hover:text-gold transition-colors">{CONTACT.phone}</p>
+                  </div>
+                </a>
 
                 <div className="flex gap-3 pt-4 border-t border-ash/40">
+                  <a href={CONTACT.whatsapp} target="_blank" rel="noopener noreferrer"
+                    className="w-10 h-10 border border-ash flex items-center justify-center text-silver hover:border-gold hover:text-gold transition-colors"
+                    title="WhatsApp">
+                    <MessageCircle size={15} />
+                  </a>
+                  <a href={`mailto:${CONTACT.email}`}
+                    className="w-10 h-10 border border-ash flex items-center justify-center text-silver hover:border-gold hover:text-gold transition-colors"
+                    title="Email">
+                    <Mail size={15} />
+                  </a>
                   <a href={import.meta.env.VITE_INSTAGRAM_URL || '#'} target="_blank" rel="noopener noreferrer"
-                    className="w-10 h-10 border border-ash flex items-center justify-center text-silver hover:border-gold hover:text-gold transition-colors">
+                    className="w-10 h-10 border border-ash flex items-center justify-center text-silver hover:border-gold hover:text-gold transition-colors"
+                    title="Instagram">
                     <Instagram size={15} />
                   </a>
                   <a href={import.meta.env.VITE_YOUTUBE_URL || '#'} target="_blank" rel="noopener noreferrer"
-                    className="w-10 h-10 border border-ash flex items-center justify-center text-silver hover:border-gold hover:text-gold transition-colors">
+                    className="w-10 h-10 border border-ash flex items-center justify-center text-silver hover:border-gold hover:text-gold transition-colors"
+                    title="YouTube">
                     <Youtube size={15} />
-                  </a>
-                  <a href={whatsapp} target="_blank" rel="noopener noreferrer"
-                    className="w-10 h-10 border border-ash flex items-center justify-center text-silver hover:border-gold hover:text-gold transition-colors">
-                    <MessageCircle size={15} />
                   </a>
                 </div>
               </div>

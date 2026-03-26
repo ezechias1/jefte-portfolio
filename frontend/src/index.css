@@ -12,7 +12,11 @@
 
   body {
     @apply bg-obsidian text-ivory font-body;
-    cursor: none;
+  }
+
+  /* Custom cursor only on devices with a fine pointer (mouse) */
+  @media (pointer: fine) {
+    body { cursor: none; }
   }
 
   ::selection {
@@ -129,3 +133,33 @@
 
 /* Video player overrides */
 .react-player { position: absolute; top: 0; left: 0; }
+
+/* Smooth focus styles */
+:focus-visible {
+  outline: 1px solid #c8a96e;
+  outline-offset: 2px;
+}
+
+/* Better select styling on dark bg */
+select option {
+  background: #1a1a1a;
+  color: #f0ece4;
+}
+
+/* Subtle link underline animation */
+.link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #c8a96e;
+  transition: width 0.3s ease;
+}
+.link-underline:hover::after {
+  width: 100%;
+}

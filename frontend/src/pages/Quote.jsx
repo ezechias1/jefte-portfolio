@@ -18,8 +18,13 @@ export default function Quote() {
       await api.post('/quotes', data);
       setSubmitted(true);
       reset();
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Something went wrong. Please try again.');
+    } catch {
+      const subject = encodeURIComponent(`Quote Request from ${data.name}`);
+      const body = encodeURIComponent(`Name: ${data.name}\nEmail: ${data.email}\nPhone: ${data.phone || 'N/A'}\nProject: ${data.projectType}\nBudget: ${data.budgetRange || 'Not specified'}\nDeadline: ${data.deadline || 'Flexible'}\n\n${data.description}`);
+      window.open(`mailto:jeftenotwstudios@gmail.com?subject=${subject}&body=${body}`, '_self');
+      toast.success('Opening your email client...');
+      setSubmitted(true);
+      reset();
     }
   };
 
