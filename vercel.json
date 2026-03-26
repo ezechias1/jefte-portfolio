@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm install --prefix frontend && npm run build && npm install --prefix backend --omit=dev",
+  "buildCommand": "npm install --prefix frontend && npm run build && npm install --prefix backend --legacy-peer-deps --omit=dev",
   "outputDirectory": "frontend/dist",
   "functions": {
     "api/index.js": {
